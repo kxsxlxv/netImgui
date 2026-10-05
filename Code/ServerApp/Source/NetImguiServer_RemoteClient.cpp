@@ -218,7 +218,7 @@ void Client::Uninitialize()
 	mClientConfigID					= NetImguiServer::Config::Client::kInvalidRuntimeID;
 	mbCompressionSkipOncePending	= false;
 	mbDisconnectPending				= false;
-	mbIsConnected					= false;
+	mbIsConnected						= false;
 	mbIsFree						= true;
 	mBGNeedUpdate					= true;
 }
@@ -503,7 +503,7 @@ void Client::CaptureImguiInput()
 
 	if( config.mDPIScaleEnabled )
 	{
-		float scale = ImGui::GetMainViewport()->DpiScale;
+		float scale = ImGui::GetIO().DisplayFramebufferScale.x;
 		scale		= scale > 1.f ? scale : 1.f;
 		pNewInput->mFontDPIScaling = 1.f + (scale - 1.f) * NetImguiServer::Config::Server::sDPIScaleRatio;
 	}
