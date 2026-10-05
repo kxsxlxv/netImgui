@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <stdint.h>
 
 namespace NetImguiServer { namespace Config
