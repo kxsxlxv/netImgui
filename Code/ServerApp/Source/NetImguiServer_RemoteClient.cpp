@@ -167,6 +167,7 @@ void Client::ProcessPendingTextureCmds()
 
 void Client::Initialize()
 {
+	mRemoteTextInputState.store(0, std::memory_order_relaxed);
 	mConnectedTime			= std::chrono::steady_clock::now();
 	mLastUpdateTime			= std::chrono::steady_clock::now() - std::chrono::hours(1);
 	mLastDrawFrame			= std::chrono::steady_clock::now();
@@ -345,6 +346,12 @@ void Client::ProcessCmdDrawFrame(NetImgui::Internal::CmdDrawFrame* pCmdDrawFrame
 		return;
 	}
 	mMouseCursor					= static_cast<ImGuiMouseCursor>(pCmdDrawFrame->mMouseCursor);
+	// PADDING[0] is a magic marker emitted by upgraded NetImgui clients.
+	// Treat older/unknown clients conservatively (state 0).
+	const uint8_t textInputState = pCmdDrawFrame->PADDING[0] == 0xA5
+		? (pCmdDrawFrame->PADDING[1] != 0 ? 2 : 1)
+		: 0;
+	mRemoteTextInputState.store(textInputState, std::memory_order_relaxed);
 
 	NetImguiImDrawData* pDrawData	= NetImgui::Internal::netImguiNew<NetImguiImDrawData>();
 	pDrawData->mFrameIndex			= pCmdDrawFrame->mFrameIndex;
