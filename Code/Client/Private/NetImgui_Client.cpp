@@ -958,6 +958,11 @@ void ClientInfo::ProcessDrawData(const ImDrawData* pDearImguiData, ImGuiMouseCur
 		return;
 
 	CmdDrawFrame* pDrawFrameNew = ConvertToCmdDrawFrame(pDearImguiData, mouseCursor);
+	// Reg extension: advertise the remote Dear ImGui text-input focus in
+	// reserved draw-frame header bytes without changing the wire layout.
+	// A magic marker distinguishes upgraded clients from older clients.
+	pDrawFrameNew->PADDING[0] = 0xA5;
+	pDrawFrameNew->PADDING[1] = ImGui::GetIO().WantTextInput ? 1 : 0;
 	pDrawFrameNew->mCompressed	= mClientCompressionMode == eCompressionMode::kForceEnable || (mClientCompressionMode == eCompressionMode::kUseServerSetting && mServerCompressionEnabled);
 	mPendingFrameOut.Assign(pDrawFrameNew);
 }
