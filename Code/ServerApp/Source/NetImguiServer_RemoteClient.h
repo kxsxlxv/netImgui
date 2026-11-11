@@ -129,6 +129,9 @@ struct Client
 	float										mMousePos[2]			= {0,0};
 	float										mMouseWheelPos[2]		= {0,0};
 	ImGuiMouseCursor							mMouseCursor			= ImGuiMouseCursor_None;	// Last mosue cursor remote client requested
+	// 0 = unknown/legacy client, 1 = not editing, 2 = editing.
+	// Updated by the receive thread and read by Reg's render/input thread.
+	std::atomic_uint8_t						mRemoteTextInputState{0};
 	ImGuiContext*								mpBGContext				= nullptr;					// Special Imgui Context used to render the background (only updated when needed)
 	bool										mBGNeedUpdate			= true;						// Let engine know that we should regenerate the background draw commands
 	NetImgui::Internal::Network::SocketInfo*	mpSocket				= nullptr;	//!< Socket used for communications 
